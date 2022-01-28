@@ -15,35 +15,35 @@ def main():
         # (1) replace pass with your code
         #input variables
         
-        # This asks how much money they enter the port with.
-        print("What is the plunder when the reavers enter the port?")
-        initial_plunder = int(input(""))
-        print(f"You have entered {initial_plunder} units.")
-        
         # This asks how many crew members there are.
-        print("How many reavers are on the ship? (Including Yondu & Peter)")
-        crew_members = int(input(""))
-        print(f"You have entered {crew_members} reavers.")
+        # print("How many reavers are on the ship? (Including Yondu & Peter)")
+        reavers = int(input(""))
+        # print(f"You have entered {reavers} reavers.")
+        
+        # This asks how much money they enter the port with.
+        # print("What is the plunder when the reavers enter the port?")
+        units = int(input(""))
+        # print(f"You have entered {units} units.")
         
     except ValueError:
         print("Enter positive integers for reavers and units.")
         return
 
-    if crew_members < 1 or initial_plunder < 1:
+    if reavers < 1 or units < 1:
         print("Enter positive integers for reavers and units.")
         return
 
-    if crew_members < 3:
+    if reavers < 3:
         print("Not enough crew.")
         return
 
-    if initial_plunder <= 3 * crew_members:
+    if units <= 3 * reavers:
         print("Not enough units.")
         return
 
     # (2) replace pass with your code
     # Total amount of units after the crew goes out to celebrate
-    post_lotus_total = initial_plunder-(3*(crew_members-2))
+    post_lotus_total = units-(3*(reavers-2))
 
     # Yondus initial share
     yondus_share = post_lotus_total * .13
@@ -60,7 +60,7 @@ def main():
     plunder = plunder-peters_share
 
     # Crew members final share
-    crews_share = plunder/crew_members
+    crews_share = plunder/reavers
     crews_share = int(crews_share)
 
     # Peters final share
@@ -70,13 +70,13 @@ def main():
     peters_share += crews_share
 
     # The total amount given to the rbf
-    rbf = plunder-(crews_share*crew_members)
+    rbf = plunder-(crews_share*reavers)
 
     # Prints the results
-    print("Yondu's Share: " + str(yondus_share))
-    print("Peter's Share: " + str(peters_share))
-    print("Crew's Share: " + str(crews_share))
-    print("RBF Total: " + str(rbf))
+    print("Yondu's share: " + str(yondus_share))
+    print("Peter's share: " + str(peters_share))
+    print("Crew: " + str(crews_share))
+    print("RBF: " + str(rbf))
 
 if __name__ == "__main__":
     main()
