@@ -16,14 +16,14 @@ def main():
         #input variables
         
         # This asks how many crew members there are.
-        # print("How many reavers are on the ship? (Including Yondu & Peter)")
+        print("How many reavers are on the ship? (Including Yondu & Peter)")
         reavers = int(input(""))
-        # print(f"You have entered {reavers} reavers.")
+        print(f"You have entered {reavers} reavers.")
         
         # This asks how much money they enter the port with.
-        # print("What is the plunder when the reavers enter the port?")
+        print("What is the plunder when the reavers enter the port?")
         units = int(input(""))
-        # print(f"You have entered {units} units.")
+        print(f"You have entered {units} units.")
         
     except ValueError:
         print("Enter positive integers for reavers and units.")
@@ -71,6 +71,7 @@ def main():
 
     # The total amount given to the rbf
     rbf = plunder-(crews_share*reavers)
+    #  - (10*20)
 
     # Prints the results
     print("Yondu's share: " + str(yondus_share))

@@ -1,0 +1,15 @@
+import turtle
+t = turtle.Turtle()
+wn = t.getscreen()
+def makeSquare(height, angle1, angle2):
+    for i in range(2):
+        t.forward(height)
+        t.rt(angle1)
+        t.forward(height)
+        t.rt(angle2)
+
+
+wn.bgcolor("#abfcff")
+
+makeSquare(100, 135, 45)
+input()
