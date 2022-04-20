@@ -1,15 +1,157 @@
 import turtle
-t = turtle.Turtle()
-wn = t.getscreen()
-def makeSquare(height, angle1, angle2):
+
+def main(time_of_day):
+    # try:
+    #     print("Please select 'morning' or 'night'")
+    #     time_of_day = input()
+        
+    # except ValueError:
+    #     print("Please enter 'morning' or 'night'\n")
+    #     print("You may enter 1 for morning and 2 for night\n")
+    #     return
+    
+    t = turtle.Turtle()
+    wn = t.getscreen()
+    
+    # if time_of_day == 1:
+    #         time = "morning"
+    # elif time_of_day == 2:
+    #     time = "night"
+    # elif time_of_day == "morning":
+    #     time = "morning"
+    # elif time_of_day == "night":
+    #     time = "night"
+    
+    colors = {
+        "morning": {
+            "sky": "#aac9fe",
+            "roof": "#eaa469",
+            "grass": "#465a1f",
+            "white": "#eed9cc",
+            "light green": "#618335",
+            "dark green": "#2d4127",
+            "light grey": "#c5bdbe",
+            "dark grey": "#675e81",
+        },
+        "night": {
+            "sky": "#",
+            "roof": "#",
+            "grass": "#",
+            "white": "#",
+            "light green": "#",
+            "dark green": "#",
+            "light grey": "#",
+            "dark grey": "#",
+        }
+    }
+
+    sky = colors[time_of_day].get("sky")
+    roof = colors[time_of_day].get("roof")
+    grass = colors[time_of_day].get("grass")
+    my_white = colors[time_of_day].get("white")
+    green_light = colors[time_of_day].get("light green")
+    green_dark = colors[time_of_day].get("dark green")
+    grey_light = colors[time_of_day].get("light grey")
+    grey_dark = colors[time_of_day].get("dark grey")
+
+
+    def makeRect(height1, height2, angle1, angle2):
+        for i in range(2):
+            t.forward(height1)
+            t.rt(angle1)
+            t.forward(height2)
+            t.rt(angle2)
+
+    """Scene"""
+    # Draws sky
+    wn.screensize(800,600)
+    wn.bgcolor("gray")
+    t.penup()
+    t.goto(-110, 90)
+    t.color(sky)
+    t.begin_fill()
+    makeRect(220, 170, 90, 90)
+    t.end_fill()
+    t.penup()
+    
+    # Draws Grass
+    t.goto(110, -10) # RIGHT SIDE OF SCREEN
+    t.rt(90)
+    t.pendown()
+    t.color(grass)
+    t.begin_fill()
+    makeRect(60, 110, 90, 90)
+    t.end_fill()
+    t.penup()
+    t.goto(-110, -20)
+    t.lt(90)
+    t.begin_fill()
+    makeRect(110, 50, 90, 90)
+    t.end_fill()
+    t.penup()
+
+    # Draws trees in background
+
+    """House"""
+    # Draws front of house  
+    t.goto(0,0)
+    t.rt(90)
+    t.forward(32.5)
+    t.rt(90)
+    t.forward(40)
+    t.rt(90)
+    t.color(my_white) # WHITE
+    t.begin_fill()
+    makeRect(40, 70, 90, 90)
+    t.end_fill()
+    
+    #Draws door
+    t.penup()
+    t.rt(90)
+    t.forward(40)
+    t.lt(90)
+    t.forward(32.5)
+    t.rt(90)
+    t.pendown()
+    t.color(grey_light) # LIGHT GREY
+    t.begin_fill()
+    makeRect(25, 32.5, 90, 90)
+    t.end_fill()
+    t.rt(90)
+    t.forward(32.5)
+    t.lt(90)
+    t.forward(5)
+    t.lt(90)
+    t.color(grey_dark) # DARK GREY
+    t.begin_fill()
+    makeRect(25, 15, 90, 90)
+    t.end_fill()
+    
+    # Draws steps
+    t.color(grey_light) # LIGHT GREY
+    t.color()
+    t.lt(90)
+    t.forward(5)
+    t.lt(180)
     for i in range(2):
-        t.forward(height)
-        t.rt(angle1)
-        t.forward(height)
-        t.rt(angle2)
+        t.color(grey_dark) # DARK GREY // STEP SHADDOW
+        t.begin_fill()
+        makeRect(25, 2.5, 90, 90)
+        t.end_fill()
+        t.rt(90)
+        t.forward(2.5)
+        t.lt(90)
+        t.color(grey_light) # LIGHT GREY // STEP
+        t.begin_fill()
+        makeRect(25, 1, 90, 90)
+        t.end_fill()
+        t.rt(90)
+        t.forward(1)
+        t.lt(90)
 
+    #Draws Windows
 
-wn.bgcolor("#abfcff")
-
-makeSquare(100, 135, 45)
+    # Draws roof
+    
+main("morning")
 input()
