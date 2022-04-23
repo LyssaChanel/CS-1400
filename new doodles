@@ -1,47 +1,37 @@
 import turtle
 
-def main(time_of_day):
-    # try:
-    #     print("Please select 'morning' or 'night'")
-    #     time_of_day = input()
+def main():
+    try:
+        print("Please select 'morning' or 'night'")
+        time_of_day = input()
         
-    # except ValueError:
-    #     print("Please enter 'morning' or 'night'\n")
-    #     print("You may enter 1 for morning and 2 for night\n")
-    #     return
+    except ValueError:
+        print("Please enter 'morning' or 'night'\n")
+        return
     
     t = turtle.Turtle()
     wn = t.getscreen()
     
-    # if time_of_day == 1:
-    #         time = "morning"
-    # elif time_of_day == 2:
-    #     time = "night"
-    # elif time_of_day == "morning":
-    #     time = "morning"
-    # elif time_of_day == "night":
-    #     time = "night"
-    
     colors = {
         "morning": {
-            "sky": "#aac9fe",
-            "roof": "#eaa469",
-            "grass": "#465a1f",
-            "white": "#eed9cc",
-            "light green": "#618335",
-            "dark green": "#2d4127",
-            "light grey": "#c5bdbe",
-            "dark grey": "#675e81",
+            "sky": "#b2c7f8",
+            "roof": "#d99459",
+            "grass": "#b2b15f",
+            "white": "#faeede",
+            "tree": "#5b6921",
+            "trunk": "#936d48",
+            "light grey": "#978e91",
+            "dark grey": "#8d8177",
         },
         "night": {
-            "sky": "#",
-            "roof": "#",
-            "grass": "#",
-            "white": "#",
-            "light green": "#",
-            "dark green": "#",
-            "light grey": "#",
-            "dark grey": "#",
+            "sky": "#575390",
+            "roof": "#a27733",
+            "grass": "#3b502f",
+            "white": "#8d8177", 
+            "tree": "#213419",
+            "trunk": "#3c372b",
+            "light grey": "#80767a",
+            "dark grey": "#4c4144",
         }
     }
 
@@ -49,11 +39,13 @@ def main(time_of_day):
     roof = colors[time_of_day].get("roof")
     grass = colors[time_of_day].get("grass")
     my_white = colors[time_of_day].get("white")
-    green_light = colors[time_of_day].get("light green")
-    green_dark = colors[time_of_day].get("dark green")
+    tree = colors[time_of_day].get("green")
+    trunk = colors[time_of_day].get("trunk")
     grey_light = colors[time_of_day].get("light grey")
     grey_dark = colors[time_of_day].get("dark grey")
 
+    # x_current = t.pos()[0]
+    # y_current = t.pos()[1]
 
     def makeRect(height1, height2, angle1, angle2):
         for i in range(2):
@@ -61,6 +53,12 @@ def main(time_of_day):
             t.rt(angle1)
             t.forward(height2)
             t.rt(angle2)
+    
+    def makeCircle(radius):
+        for i in range(360):
+            t.forward(radius)
+            t.rt(1)
+        
 
     """Scene"""
     # Draws sky
@@ -70,49 +68,52 @@ def main(time_of_day):
     t.goto(-110, 90)
     t.color(sky)
     t.begin_fill()
-    makeRect(220, 170, 90, 90)
+    makeRect(220, 160, 90, 90)
     t.end_fill()
     t.penup()
     
     # Draws Grass
-    t.goto(110, -10) # RIGHT SIDE OF SCREEN
-    t.rt(90)
+    t.goto(-110, -20) # LEFT SIDE OF SCREEN
     t.pendown()
     t.color(grass)
+    t.setheading(0)
     t.begin_fill()
-    makeRect(60, 110, 90, 90)
+    makeRect(220, 50, 90, 90)
     t.end_fill()
     t.penup()
-    t.goto(-110, -20)
-    t.lt(90)
-    t.begin_fill()
-    makeRect(110, 50, 90, 90)
-    t.end_fill()
-    t.penup()
-
-    # Draws trees in background
+    
 
     """House"""
     # Draws front of house  
-    t.goto(0,0)
-    t.rt(90)
-    t.forward(32.5)
-    t.rt(90)
-    t.forward(40)
-    t.rt(90)
+    t.goto(-40,-32.5)
+    t.setheading(90)
     t.color(my_white) # WHITE
     t.begin_fill()
     makeRect(40, 70, 90, 90)
     t.end_fill()
+    t.penup()
+    
+    # Draws roof
+    t.forward(40)
+    t.pendown()
+    t.color(roof)
+    t.begin_fill()
+    t.rt(10)
+    t.forward(25)
+    t.rt(80)
+    t.forward(60)
+    t.rt(80)
+    t.forward(25)
+    t.rt(100)
+    t.forward(70)
+    t.end_fill()
+    t.penup()
+    
     
     #Draws door
-    t.penup()
-    t.rt(90)
-    t.forward(40)
-    t.lt(90)
-    t.forward(32.5)
-    t.rt(90)
+    t.goto(0,0)
     t.pendown()
+    t.setheading(0)
     t.color(grey_light) # LIGHT GREY
     t.begin_fill()
     makeRect(25, 32.5, 90, 90)
@@ -148,10 +149,24 @@ def main(time_of_day):
         t.rt(90)
         t.forward(1)
         t.lt(90)
+    t.penup()
 
     #Draws Windows
-
-    # Draws roof
+    t.color(grey_dark)
+    t.goto(-15, -5)
+    t.setheading(0)
+    t.pendown()
+    t.begin_fill()
+    makeRect(10, 20, 90, 90)
+    t.end_fill()
+    t.penup()
+    t.goto(-35, -5)
+    t.pendown()
+    t.begin_fill()
+    makeRect(10, 20, 90, 90)
+    t.end_fill()
+    t.penup()
     
-main("morning")
+    
+main()
 input()
