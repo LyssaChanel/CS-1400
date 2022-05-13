@@ -1,0 +1,61 @@
+def upper_or_lower():
+    my_str = input()
+    up_or_low = ""
+    for char in my_str:
+        if char.isupper():
+            up_or_low += "u"
+        elif char.islower():
+            up_or_low += "l"
+        else:
+            up_or_low += "-"
+    print(up_or_low)
+upper_or_lower()
+
+
+def echo():
+    my_str = input()
+    length = len(my_str)
+    output = my_str*length
+    for i in range(length):
+        print(output)
+echo()
+
+
+def first_and_last():
+    response = input()
+    letters = []
+    for char in response:
+        letters.append(char)
+    first_l = letters[0]
+    last_l = letters[-1]
+    print(f"{first_l} is the first character and {last_l} is the last character")
+first_and_last()
+
+
+my_str = input()
+my_str = str(my_str)
+halfway = len(my_str)//2
+print(my_str[:halfway])
+print(my_str[halfway:])
+
+
+
+def switcheroo():
+    my_str = input()
+    first_l = []
+    second_l = []
+    new_str = ""
+    for i in range(len(my_str)):
+        if i % 2 == 0:
+            first_l.append(my_str[i])
+        if i % 2 != 0:
+            second_l.append(my_str[i])
+    # if my_str[i] in second_l and i % 2 == 0:
+    #   new_str += second_l
+    #   print(second_l)
+    # else:
+    #   new_str += first_l
+    #   print(first_l)
+    print(first_l)
+    print(second_l)
+switcheroo()

@@ -1,0 +1,95 @@
+"""
+Name: Alyssa Simmonds Smederovac
+Professor: Bruce Embry
+Class: CS 1400-002
+Date: 5/12/22
+"""
+
+import turtle
+import sys
+import random
+
+
+walkers = {
+    "Pa": {
+        "chances":["go_north", "go_east", "go_south", "go_west"],
+        "turtle": turtle.Turtle()
+    },
+    "Mi-Ma": {
+        "chances":["go_north","go_east", "go_south", "go_south", "go_west"],
+        "turtle": turtle.Turtle()
+    },
+    "Reg": {
+        "chances": ["go_east", "go_west"],
+        "turtle": turtle.Turtle()
+    }
+}
+
+walkers["Pa"]["turtle"].color("blue")
+walkers["Mi-Ma"]["turtle"].color("purple")
+walkers["Reg"]["turtle"].color("pink")
+
+walkers["Pa"]["turtle"].penup()
+walkers["Mi-Ma"]["turtle"].penup()
+walkers["Reg"]["turtle"].penup()
+
+walkers["Pa"]["turtle"].shape("square")
+walkers["Mi-Ma"]["turtle"].shape("circle")
+walkers["Reg"]["turtle"].shape("turtle")
+
+wn = walkers["Pa"]["turtle"].getscreen()
+wn.screensize(1000,1000)
+
+
+"""FUNCTIONS"""
+
+def go_east(t,distance):
+    walkers[t]["turtle"].setheading(0)
+    walkers[t]["turtle"].forward(distance)
+    walkers[t]["turtle"].stamp()
+    
+def go_north(t,distance):
+    walkers[t]["turtle"].setheading(90)
+    walkers[t]["turtle"].forward(distance)
+    walkers[t]["turtle"].stamp()
+
+def go_west(t,distance):
+    walkers[t]["turtle"].setheading(180)
+    walkers[t]["turtle"].forward(distance)
+    walkers[t]["turtle"].stamp()
+
+def go_south(t,distance):
+    walkers[t]["turtle"].setheading(270)
+    walkers[t]["turtle"].forward(distance)
+    walkers[t]["turtle"].stamp()
+
+def get_move(person):
+    poss_moves = walkers[person]["chances"]
+    return poss_moves[random.randint(0,len(poss_moves)-1)]
+
+move = {
+    "go_east": go_east,
+    "go_north": go_north,
+    "go_west": go_west,
+    "go_south": go_south
+}
+
+def simulate(distance, trials, walker):
+    distance = int(distance)
+    trials = int(trials)
+    if walker == "all":
+        for trial in range(trials):
+            move[get_move("Pa")]("Pa", distance)
+            move[get_move("Mi-Ma")]("Mi-Ma", distance)
+            move[get_move("Reg")]("Reg", distance)
+    else:
+        for trial in range(trials):
+            move[get_move(walker)](walker, distance)
+
+  
+def main():
+    simulate(sys.argv[1], sys.argv[2], sys.argv[3])
+    wn.exitonclick()
+    
+if __name__ == "__main__":
+    main()
