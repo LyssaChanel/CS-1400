@@ -1,0 +1,16 @@
+def reading(my_str):
+    with open("words.txt", "r") as input_file:
+        lines = input_file.read()
+        lines = lines.split("\n")
+        text = {}
+        count = 0
+        while count in range(len(lines)):
+            text.update({lines[count]: count})
+            count += 1
+        print(text)
+        if my_str in text.keys():
+            print("True")
+        else:
+            print("False")
+
+reading("IS")

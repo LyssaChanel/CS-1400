@@ -1,0 +1,55 @@
+"""
+Name: Alyssa Simmonds Smederovac
+Teacher: Bruce Embry
+Class: CS 1400 003
+"""
+import sys
+def main():
+    scrambled_file = sys.argv[1]
+    with open(scrambled_file, "r") as input_file:
+        books = {}
+        with open("novel_summary.txt", "w") as output_file:
+            mass = input_file.read()
+            lines = mass.split("\n")
+            for line in lines:
+                parts = line.split("|")
+                if len(parts) == 3:
+                    if not parts[2] in books.keys():
+                        books.update({parts[2]: {}})
+                    books[parts[2]].update({parts[1]: parts[0]})
+            sorted_books = dict(sorted(books.items()))
+            with open("novel_text.txt", "w") as book_file:
+                book_num = 0
+                for title, book in sorted_books.items():
+                    book_num += 1
+                    max_line = None
+                    min_line = None
+                    total = 0
+                    book_file.writelines(title + "\n")
+                    for i in range(len(book)):
+                        if str(i) in book:
+                            current_line = book[str(i)]
+                            book_file.writelines(current_line + "\n")
+                            if max_line is None:
+                                max_line = str(i)
+                            elif len(book.get(max_line)) == len(current_line) and current_line > max_line:
+                                max_line = str(i)
+                            elif len(current_line) > len(book.get(max_line)):
+                                max_line = str(i)
+                            if min_line is None:
+                                min_line = str(i)
+                            elif len(book.get(min_line)) == len(current_line) and current_line < min_line:
+                                min_line = str(i)
+                            elif len(current_line) < len(book.get(min_line)):
+                                min_line = str(i)
+                            total += len(current_line)
+                    if book_num == len(sorted_books):
+                        book_file.writelines("\n")
+                    else:
+                        book_file.writelines("-----\n")
+                    output_file.writelines(title + "\n")
+                    output_file.writelines(f"Longest line ({max_line}): {book[max_line]}" + "\n")
+                    output_file.writelines(f"Shortest line ({min_line}): {book[min_line]}" + "\n")
+                    output_file.writelines(f"Average length: {str(round(total/len(book)))}\n\n")
+if __name__ == "__main__":
+    main()

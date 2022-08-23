@@ -1,0 +1,185 @@
+"""
+Name: Alyssa Simmonds Smederovac
+Professor: Bruce Embry
+Class: CS 1400-002
+Date: 5/12/22
+
+Instructions: In the terminal, please type "python3 RandomWalk (distance) (trials) (walker: all, Pa, Mi-Ma, or Reg)"
+"""
+
+import turtle
+import sys
+import random
+import statistics
+import subprocess
+import tempfile
+
+def save_to_image(dest='random_walk.png'):
+    '''Saves the turtle canvas to dest. Do not modify this function.'''
+    with tempfile.NamedTemporaryFile(prefix='random_walk',
+                                     suffix='.eps') as tmp:
+        turtle.getcanvas().postscript(file=tmp.name)
+        subprocess.run(['gs',
+                        '-dSAFER',
+                        '-o',
+                        dest,
+                        '-r200',
+                        '-dEPSCrop',
+                        '-sDEVICE=png16m',
+                        tmp.name],
+                       stdout=subprocess.DEVNULL)
+
+
+walkers = {
+    "Pa": {
+        "chances":["go_north", "go_east", "go_south", "go_west"],
+        "turtle": turtle.Turtle()
+    },
+    "Mi-Ma": {
+        "chances":["go_north","go_east", "go_south", "go_south", "go_west"],
+        "turtle": turtle.Turtle()
+    },
+    "Reg": {
+        "chances": ["go_east", "go_west"],
+        "turtle": turtle.Turtle()
+    }
+}
+
+walkers["Pa"]["turtle"].color("blue")
+walkers["Mi-Ma"]["turtle"].color("purple")
+walkers["Reg"]["turtle"].color("pink")
+
+walkers["Pa"]["turtle"].penup()
+walkers["Mi-Ma"]["turtle"].penup()
+walkers["Reg"]["turtle"].penup()
+
+walkers["Pa"]["turtle"].shape("square")
+walkers["Mi-Ma"]["turtle"].shape("circle")
+walkers["Reg"]["turtle"].shape("turtle")
+
+walkers["Pa"]["turtle"].shapesize(0.5, 0.5)
+walkers["Mi-Ma"]["turtle"].shapesize(0.5, 0.5)
+walkers["Reg"]["turtle"].shapesize(0.5, 0.5)
+
+walkers["Pa"]["turtle"].speed(0)
+walkers["Mi-Ma"]["turtle"].speed(0)
+walkers["Reg"]["turtle"].speed(0)
+
+wn = walkers["Pa"]["turtle"].getscreen()
+wn.screensize(1000,1000)
+
+
+def go_east(walker,step_len):
+    """Makes the walker move east"""
+    walkers[walker]["turtle"].setheading(0)
+    walkers[walker]["turtle"].forward(step_len)
+    # walkers[walker]["turtle"].stamp()
+
+def go_north(walker,step_len):
+    """Makes the walker move north"""
+    walkers[walker]["turtle"].setheading(90)
+    walkers[walker]["turtle"].forward(step_len)
+
+def go_west(walker,step_len):
+    """Makes the walker move west"""
+    walkers[walker]["turtle"].setheading(180)
+    walkers[walker]["turtle"].forward(step_len)
+
+def go_south(walker,step_len):
+    """Makes the walker move south"""
+    walkers[walker]["turtle"].setheading(270)
+    walkers[walker]["turtle"].forward(step_len)
+
+def get_move(person):
+    """Will pick a random direction based off
+    of possible moves for walker"""
+    poss_moves = walkers[person]["chances"]
+    return poss_moves[random.randint(0,len(poss_moves)-1)]
+
+# def write_outupt(walker, steps, mean, cv, max, min):
+#     "Will write output to terminal"
+#     if walker == "Pa":
+#         print(f"{walker} random walk of {steps} steps")
+#         print(f"Mean = {mean} CV = {cv}")
+#         print(f"Max = {max} Min = {min}")
+#     if walker == "Mi-Ma":
+#         print(f"{walker} random walk of {steps} steps")
+#         print(f"Mean = {mean} CV = {cv}")
+#         print(f"Max = {max} Min = {min}")
+#     if walker == "Reg":
+#         print(f"{walker} random walk of {steps} steps")
+#         print(f"Mean = {mean} CV = {cv}")
+#         print(f"Max = {max} Min = {min}")
+#     if walker == "all":
+#         return
+
+def plot():
+    simulate(sys.argv[1], sys.argv[2], sys.argv[3])
+    save_to_image()
+
+move = {
+    "go_east": go_east,
+    "go_north": go_north,
+    "go_west": go_west,
+    "go_south": go_south
+}
+
+def simulate(steps, trials, walker):
+    """Will simulate the walk for a certain amount of trials"""
+    pa_end_point = {
+        "x": [],
+        "y": []
+    }
+    mi_end_point = {
+        "x": [],
+        "y": []
+    }
+    reg_end_point = {
+        "x": [],
+        "y": []
+    }
+
+    trials = int(trials)
+    step_len = 50
+
+    try:
+        step_list = steps.split(",")
+        count = 0
+        while count in range(len(step_list)):
+            step_list[count] = int(step_list[count])
+            count +=1
+    except:
+        return
+
+    if walker == "all":
+        for trial in range(trials):
+            walkers["Pa"]["turtle"].goto(0,0)
+            walkers["Mi-Ma"]["turtle"].goto(0,0)
+            walkers["Reg"]["turtle"].goto(0,0)
+            count = 0
+            for step in range(step_list[count]+1):
+                move[get_move("Pa")]("Pa", step_len)
+                move[get_move("Mi-Ma")]("Mi-Ma", step_len)
+                move[get_move("Reg")]("Reg", step_len)
+                if step == step_list[count]:
+                    print("done")
+                    walkers["Pa"]["turtle"].stamp()
+                    walkers["Mi-Ma"]["turtle"].stamp()
+                    walkers["Reg"]["turtle"].stamp()
+                    count += 1
+                step += 1
+            trial += 1
+
+    else:
+        trial = 0
+        while trial in range(trials):
+            move[get_move(walker)](walker, steps)
+            trial += 1
+
+def main():
+    """Will run the simulate function"""
+    plot()
+    wn.exitonclick()
+
+if __name__ == "__main__":
+    main()

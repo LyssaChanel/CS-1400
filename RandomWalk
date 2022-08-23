@@ -3,93 +3,274 @@ Name: Alyssa Simmonds Smederovac
 Professor: Bruce Embry
 Class: CS 1400-002
 Date: 5/12/22
+
+Instructions: In the terminal, please type "python3 RandomWalk (distance) (trials) (walker: all, Pa, Mi-Ma, or Reg)"
 """
 
+from re import S
 import turtle
 import sys
 import random
+import math
+import statistics
+import subprocess
+import tempfile
+
+def save_to_image(dest='random_walk.png'):
+    '''Saves the turtle canvas to dest. Do not modify this function.'''
+    with tempfile.NamedTemporaryFile(prefix='random_walk',
+                                     suffix='.eps') as tmp:
+        turtle.getcanvas().postscript(file=tmp.name)
+        subprocess.run(['gs',
+                        '-dSAFER',
+                        '-o',
+                        dest,
+                        '-r200',
+                        '-dEPSCrop',
+                        '-sDEVICE=png16m',
+                        tmp.name],
+                       stdout=subprocess.DEVNULL)
 
 
-walkers = {
-    "Pa": {
-        "chances":["go_north", "go_east", "go_south", "go_west"],
-        "turtle": turtle.Turtle()
-    },
-    "Mi-Ma": {
-        "chances":["go_north","go_east", "go_south", "go_south", "go_west"],
-        "turtle": turtle.Turtle()
-    },
-    "Reg": {
-        "chances": ["go_east", "go_west"],
-        "turtle": turtle.Turtle()
-    }
-}
-
-walkers["Pa"]["turtle"].color("blue")
-walkers["Mi-Ma"]["turtle"].color("purple")
-walkers["Reg"]["turtle"].color("pink")
-
-walkers["Pa"]["turtle"].penup()
-walkers["Mi-Ma"]["turtle"].penup()
-walkers["Reg"]["turtle"].penup()
-
-walkers["Pa"]["turtle"].shape("square")
-walkers["Mi-Ma"]["turtle"].shape("circle")
-walkers["Reg"]["turtle"].shape("turtle")
-
-wn = walkers["Pa"]["turtle"].getscreen()
-wn.screensize(1000,1000)
-
-
-"""FUNCTIONS"""
-
-def go_east(t,distance):
-    walkers[t]["turtle"].setheading(0)
-    walkers[t]["turtle"].forward(distance)
-    walkers[t]["turtle"].stamp()
-    
-def go_north(t,distance):
-    walkers[t]["turtle"].setheading(90)
-    walkers[t]["turtle"].forward(distance)
-    walkers[t]["turtle"].stamp()
-
-def go_west(t,distance):
-    walkers[t]["turtle"].setheading(180)
-    walkers[t]["turtle"].forward(distance)
-    walkers[t]["turtle"].stamp()
-
-def go_south(t,distance):
-    walkers[t]["turtle"].setheading(270)
-    walkers[t]["turtle"].forward(distance)
-    walkers[t]["turtle"].stamp()
-
-def get_move(person):
+def get_move(person, walkers):
+    """This function will choose a random direction
+    based off of the possible moves for a walker"""
     poss_moves = walkers[person]["chances"]
     return poss_moves[random.randint(0,len(poss_moves)-1)]
 
-move = {
-    "go_east": go_east,
-    "go_north": go_north,
-    "go_west": go_west,
-    "go_south": go_south
-}
 
-def simulate(distance, trials, walker):
-    distance = int(distance)
+def calculate(end_points):
+    """This function will calculate and return
+    the mean, cv, max distance, and min distance"""
+    distance_to_origin = []
+    for point in end_points:
+        distance_to_origin.append(math.dist(point,(0,0)))
+        # distance_to_origin.append(math.sqrt((point[0])**2 + (point[1])**2))
+    total_sum = 0
+    for distance in distance_to_origin:
+        total_sum += distance
+    mean = round(total_sum/len(distance_to_origin), 1)
+    stan_dev = statistics.stdev(distance_to_origin, mean)
+    const_v = round(stan_dev/mean, 1)
+    max_dist = round(max(distance_to_origin),1)
+    min_dist = round(min(distance_to_origin),1)
+    return mean, const_v, max_dist, min_dist
+
+def all_walkers(walkers, move, trials, step_list):
+    pa_stats = {}
+    mi_stats = {}
+    reg_stats = {}
+    walkers["Pa"]["turtle"].showturtle()
+    walkers["Mi-Ma"]["turtle"].showturtle()
+    walkers["Reg"]["turtle"].showturtle()
+    for step_num in step_list:
+        pa_end_points = []
+        mi_end_points = []
+        reg_end_points = []
+        
+        for trial in range(trials):
+            walkers["Pa"]["turtle"].goto(0,0)
+            walkers["Mi-Ma"]["turtle"].goto(0,0)
+            walkers["Reg"]["turtle"].goto(0,0)
+            pa_cur_x = 0
+            pa_cur_y = 0
+            mi_cur_x = 0
+            mi_cur_y = 0
+            reg_cur_x = 0
+            reg_cur_y = 0
+            for cur_step in range(step_num):
+                pa_direction = get_move("Pa", walkers)
+                if pa_direction == "go_north" or pa_direction == "go_south":
+                    pa_cur_y += move[pa_direction]
+                if pa_direction == "go_east" or pa_direction == "go_west":
+                    pa_cur_x += move[pa_direction]
+                
+                mi_direction = get_move("Mi-Ma", walkers)
+                if mi_direction == "go_north" or mi_direction == "go_south":
+                    mi_cur_y += move[mi_direction]
+                if mi_direction == "go_east" or mi_direction == "go_west":
+                    mi_cur_x += move[mi_direction]
+                
+                reg_direction = get_move("Reg", walkers)
+                if reg_direction == "go_east" or reg_direction == "go_west":
+                    reg_cur_x += move[reg_direction]
+                    
+                if cur_step == (step_num-1):
+                    if step_num == 1000:
+                        walkers["Pa"]["turtle"].ht()
+                        walkers["Mi-Ma"]["turtle"].ht()
+                        walkers["Reg"]["turtle"].ht()
+                        pa_end_points.append((pa_cur_x, pa_cur_y))
+                        mi_end_points.append((mi_cur_x, mi_cur_y))
+                        reg_end_points.append((reg_cur_x, reg_cur_y))
+                        break
+                    walkers["Pa"]["turtle"].goto(pa_cur_x, pa_cur_y)
+                    walkers["Mi-Ma"]["turtle"].goto(mi_cur_x, mi_cur_y)
+                    walkers["Reg"]["turtle"].goto(reg_cur_x, reg_cur_y)
+                    
+                    walkers["Pa"]["turtle"].stamp()
+                    walkers["Mi-Ma"]["turtle"].stamp()
+                    walkers["Reg"]["turtle"].stamp()
+                    pa_end_points.append((pa_cur_x, pa_cur_y))
+                    mi_end_points.append((mi_cur_x, mi_cur_y))
+                    reg_end_points.append((reg_cur_x, reg_cur_y))
+                cur_step += 1
+            trial +=1 
+        
+        if not step_num in pa_stats.keys():
+            pa_stats.update({step_num:{}})
+        if not step_num in mi_stats.keys():
+            mi_stats.update({step_num:{}})
+        if not step_num in reg_stats.keys():
+            reg_stats.update({step_num:{}})
+            
+        pa_stats[step_num].update({0: calculate( pa_end_points)[0]})
+        mi_stats[step_num].update({0: calculate(mi_end_points)[0]})
+        reg_stats[step_num].update({0: calculate(reg_end_points)[0]})
+        pa_stats[step_num].update({1: calculate( pa_end_points)[1]})
+        mi_stats[step_num].update({1: calculate(mi_end_points)[1]})
+        reg_stats[step_num].update({1: calculate(reg_end_points)[1]})
+        pa_stats[step_num].update({2: calculate( pa_end_points)[2]})
+        mi_stats[step_num].update({2: calculate(mi_end_points)[2]})
+        reg_stats[step_num].update({2: calculate(reg_end_points)[2]})
+        pa_stats[step_num].update({3: calculate( pa_end_points)[3]})
+        mi_stats[step_num].update({3: calculate(mi_end_points)[3]})
+        reg_stats[step_num].update({3: calculate(reg_end_points)[3]})
+        
+    for step_num in step_list:
+        print(f"Pa random walk of {step_num} steps")
+        print(f"Mean = {pa_stats[step_num][0]} CV = {pa_stats[step_num][1]}")
+        print(f"Max = {pa_stats[step_num][2]} Min = {pa_stats[step_num][3]}")
+    for step_num in step_list:
+        print(f"Mi-Ma random walk of {step_num} steps")
+        print(f"Mean = {mi_stats[step_num][0]} CV = {mi_stats[step_num][1]}")
+        print(f"Max = {mi_stats[step_num][2]} Min = {mi_stats[step_num][3]}")
+    for step_num in step_list:
+        print(f"Reg random walk of {step_num} steps")
+        print(f"Mean = {reg_stats[step_num][0]} CV = {reg_stats[step_num][1]}")
+        print(f"Max = {reg_stats[step_num][2]} Min = {reg_stats[step_num][3]}")
+    
+
+def single_walker(walkers, walker,  move, trials, step_list):
+    walker_stats = {}
+    walkers[walker]["turtle"].st()
+    for step_num in step_list:
+        walker_end_points = []
+        for trial in range(trials):
+            walkers[walker]["turtle"].goto(0,0)
+            walker_cur_x = 0
+            walker_cur_y = 0
+            for cur_step in range(step_num):
+                direction = get_move(walker, walkers)
+                if direction == "go_north" or direction == "go_south":
+                    walker_cur_y += move[get_move(walker, walkers)]
+                if direction == "go_east" or direction == "go_west":
+                    walker_cur_x += move[get_move(walker, walkers)]
+                if cur_step == (step_num-1):
+                    walkers[walker]["turtle"].goto(walker_cur_x, walker_cur_y)
+                    if step_num == 1000:
+                        walkers[walker]["turtle"].stamp()
+                    walker_end_points.append((walker_cur_x, walker_cur_y))
+        if not step_num in walker_stats.keys():
+            walker_stats.update({step_num:{}})
+        walker_stats[step_num].update({0: calculate( walker_end_points)[0]})
+        walker_stats[step_num].update({1: calculate( walker_end_points)[1]})
+        walker_stats[step_num].update({2: calculate( walker_end_points)[2]})
+        walker_stats[step_num].update({3: calculate( walker_end_points)[3]})
+    for step_num in step_list:
+        print(f"Pa random walk of {step_num} steps")
+        print(f"Mean = {walker_stats[step_num][0]} CV = {walker_stats[step_num][1]}")
+        print(f"Max = {walker_stats[step_num][2]} Min = {walker_stats[step_num][3]}")
+   
+def simulate(steps, trials, walker):
+    """This simulates given step lengths for a given amount of trials"""
+    walkers = {
+        "Pa": {
+            "chances":["go_north", "go_east", "go_south", "go_west"],
+            "turtle": turtle.Turtle()
+        },
+        "Mi-Ma": {
+            "chances":["go_north","go_east", "go_south", "go_south", "go_west"],
+            "turtle": turtle.Turtle()
+        },
+        "Reg": {
+            "chances": ["go_east", "go_west"],
+            "turtle": turtle.Turtle()
+        }
+    }
+    # This sets up the turtles
+    walkers["Pa"]["turtle"].color("blue")
+    walkers["Mi-Ma"]["turtle"].color("purple")
+    walkers["Reg"]["turtle"].color("pink")
+
+    walkers["Pa"]["turtle"].penup()
+    walkers["Mi-Ma"]["turtle"].penup()
+    walkers["Reg"]["turtle"].penup()
+
+    walkers["Pa"]["turtle"].shape("square")
+    walkers["Mi-Ma"]["turtle"].shape("circle")
+    walkers["Reg"]["turtle"].shape("turtle")
+
+    walkers["Pa"]["turtle"].shapesize(0.5, 0.5)
+    walkers["Mi-Ma"]["turtle"].shapesize(0.5, 0.5)
+    walkers["Reg"]["turtle"].shapesize(0.5, 0.5)
+
+    walkers["Pa"]["turtle"].speed(0)
+    walkers["Mi-Ma"]["turtle"].speed(0)
+    walkers["Reg"]["turtle"].speed(0)
+    
+    walkers["Pa"]["turtle"].ht()
+    walkers["Mi-Ma"]["turtle"].ht()
+    walkers["Reg"]["turtle"].ht()
+    
+    win = walkers["Pa"]["turtle"].getscreen()
+    win.screensize(1000,1000)
+    
+    move = {
+        "go_east": 5,
+        "go_north": 5,
+        "go_west": -5,
+        "go_south": -5
+    }
+    #This turns steps into a useable list
     trials = int(trials)
+    step_list  = steps
+    count = 0
+    while count in range(len(step_list)):
+        step_list[count] = int(step_list[count])
+        count +=1
+    
+    # If the walker is all, calculate and stamp each walker
     if walker == "all":
-        for trial in range(trials):
-            move[get_move("Pa")]("Pa", distance)
-            move[get_move("Mi-Ma")]("Mi-Ma", distance)
-            move[get_move("Reg")]("Reg", distance)
-    else:
-        for trial in range(trials):
-            move[get_move(walker)](walker, distance)
+        all_walkers(walkers, move, trials, step_list)
 
-  
+    # If the walker is just "Pa", "Mi-Ma", or "Reg" the 
+    # program will calculate stats for the walker and stamp them.  
+    else:
+        single_walker(walkers, walker, move, trials, step_list)
+        
+    win.exitonclick()
+
+def plot():
+    """This will plot the data and print it to the terminal"""
+    try:
+        steps, trials, walker = sys.argv[1:]
+        # if type(steps) == str:
+        #     steps = [steps]
+            
+        steps = steps.split(',')
+    except:
+        steps = [100]
+        trials = 50
+        walker = "all"
+    simulate(steps, trials, walker)
+    # save_to_image()
+
 def main():
-    simulate(sys.argv[1], sys.argv[2], sys.argv[3])
-    wn.exitonclick()
+    """This will run the plot function when the
+    file is ran through the command line."""
+    plot()
+
     
 if __name__ == "__main__":
     main()
